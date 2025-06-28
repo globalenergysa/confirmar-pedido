@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-3" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirmar Pedido</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f6f6f6;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.1rem;
+      color: #555;
+    }
+    button {
+      margin-top: 2rem;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>¡Confirmá tu pedido!</h1>
+    <p id="mensaje">Cargando información...</p>
+    <button id="confirmarBtn">Confirmar pedido</button>
+    <div class="footer">
+      Si tenés dudas, podés comunicarte con nosotros.
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const idPedido = urlParams.get('id');
+    const mensajeEl = document.getElementById('mensaje');
+    const btn = document.getElementById('confirmarBtn');
+
+    if (idPedido) {
+      mensajeEl.innerText = `Estás a punto de confirmar el pedido ${idPedido}`;
+    } else {
+      mensajeEl.innerText = 'No se encontró el ID del pedido.';
+      btn.style.display = 'none';
+    }
+
+    btn.addEventListener('click', async () => {
+      btn.innerText = "Confirmando...";
+      btn.disabled = true;
+
+      try {
+        await fetch('https://n8n.srv867060.hstgr.cloud/webhook/confirmar-pedido', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ id_prepedido: idPedido })
+        });
+
+        btn.innerText = "¡Pedido confirmado!";
+      } catch (error) {
+        btn.innerText = "Error al confirmar";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
